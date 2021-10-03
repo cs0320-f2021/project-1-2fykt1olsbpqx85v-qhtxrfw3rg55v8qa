@@ -66,45 +66,44 @@ public class ClientRequestGenerator {
         return request;
     }
 
-    // needs to be edited to return the correct horoscpe from the user
 
-    /**
-     * This is another secured GET request that has an optional string parameter in the URL. Find out what the staff's
-     * horoscopes are!
-     *
-     * @param param - the name of the staff member whose horoscope you want to find; an empty string here will indicate
-     *              that the server should return a list of all staff members instead.
-     * @return an HttpRequest object for accessing and posting to the secured resource.
-     */
-    public static HttpRequest getHoroscopeGetRequest(String param) {
-        // Our taName parameter can either be empty, or some name, in which case it takes the format "?taName=name".
-        // If you tried this in the web browser URL you might see something like
-        // https://epb3u4xo11.execute-api.us-east-1.amazonaws.com/Prod/securedResource?taName=theInputName
-        ClientAuth clientAuth = new ClientAuth();
-        String apiKey = clientAuth.getApiKey();
-        String taName;
-        if (param.isEmpty()) {
-            taName = "";
-            String reqUri = "https://epb3u4xo11.execute-api.us-east-1.amazonaws.com/Prod/horoscopeResource/";
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(reqUri))
-                    .header("x-api-key", apiKey)
-                    .build();
-            System.out.println(request);
-            return request;
-        } else {
-            taName = "?taName=" + param;
-            String reqUri = "https://epb3u4xo11.execute-api.us-east-1.amazonaws.com/Prod/horoscopeResource/" + taName;
-            HttpRequest request = HttpRequest.newBuilder()
-                    .uri(URI.create(reqUri))
-                    .header("x-api-key", apiKey)
-                    .build();
-            System.out.println(request);
-            System.out.println("Getting star sign for " + param);
-            return request;
-        }
-    }
-}
+//    /**
+//     * This is another secured GET request that has an optional string parameter in the URL. Find out what the staff's
+//     * horoscopes are!
+//     *
+//     * @param param - the name of the staff member whose horoscope you want to find; an empty string here will indicate
+//     *              that the server should return a list of all staff members instead.
+//     * @return an HttpRequest object for accessing and posting to the secured resource.
+//     */
+//    public static HttpRequest getHoroscopeGetRequest(String param) {
+//        // Our taName parameter can either be empty, or some name, in which case it takes the format "?taName=name".
+//        // If you tried this in the web browser URL you might see something like
+//        // https://epb3u4xo11.execute-api.us-east-1.amazonaws.com/Prod/securedResource?taName=theInputName
+//        ClientAuth clientAuth = new ClientAuth();
+//        String apiKey = clientAuth.getApiKey();
+//        String taName;
+//        if (param.isEmpty()) {
+//            taName = "";
+//            String reqUri = "https://epb3u4xo11.execute-api.us-east-1.amazonaws.com/Prod/horoscopeResource/";
+//            HttpRequest request = HttpRequest.newBuilder()
+//                    .uri(URI.create(reqUri))
+//                    .header("x-api-key", apiKey)
+//                    .build();
+//            System.out.println(request);
+//            return request;
+//        } else {
+//            taName = "?taName=" + param;
+//            String reqUri = "https://epb3u4xo11.execute-api.us-east-1.amazonaws.com/Prod/horoscopeResource/" + taName;
+//            HttpRequest request = HttpRequest.newBuilder()
+//                    .uri(URI.create(reqUri))
+//                    .header("x-api-key", apiKey)
+//                    .build();
+//            System.out.println(request);
+//            System.out.println("Getting star sign for " + param);
+//            return request;
+//        }
+//    }
+//}
 
 
 }
