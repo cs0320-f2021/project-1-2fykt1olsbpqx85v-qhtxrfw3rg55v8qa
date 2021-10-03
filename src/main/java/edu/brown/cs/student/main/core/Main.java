@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main;
+package edu.brown.cs.student.main.core;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -8,12 +8,12 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import com.google.common.collect.ImmutableMap;
 
+import edu.brown.cs.student.main.client.ApiClient;
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -49,6 +49,7 @@ public final class Main {
   }
 
   private void run() {
+
     // set up parsing of command line flags
     OptionParser parser = new OptionParser();
 
@@ -196,6 +197,7 @@ public final class Main {
               System.out.println(starID);
             }
           }
+          // fill in with Api request repl
 
         } catch (Exception e) {
           e.printStackTrace();
