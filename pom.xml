@@ -116,6 +116,11 @@
       <artifactId>sqlite-jdbc</artifactId>
       <version>3.30.1</version>
     </dependency>
+      <dependency>
+          <groupId>org.mortbay.jetty</groupId>
+          <artifactId>jetty-util</artifactId>
+          <version>6.1.25</version>
+      </dependency>
   </dependencies>
 
   <!-- Build section -->
