@@ -7,30 +7,43 @@ import java.util.PriorityQueue;
 
 public class KDTree {
 
-  private Node _root;
+  private Node _root; //Stores the root of the tree.
+  private User _farthestUser = null; //The farthest user from a given user.
 
+  /*simUsers is a HashMap, with Users as keys and the distance between a given user and a target
+    User as the value. */
+  private HashMap<User, Double> _simUsers = new HashMap<User, Double>();
+
+  /**
+   * The KDTree constructor. It builds the KDTree, and initializes its root. A new KDTree should be
+   * called every time the command "users <filepath>" is called.
+   * @param userList a list of users that will be used to construct a new KD Tree.
+   */
   public KDTree(ArrayList<User> userList){
     _root = this.buildKDTree(userList, 0);
+
   }
 
   /**
-   * This method is called when the user calls the "users" command, followed by a file path.
-   * https://en.wikipedia.org/wiki/K-d_tree#Construction
+   * This method builds a new KDTree, in 3 dimensions.
+   * @param userList a list of users that will be used to construct the tree
+   * @param depth the depth indicates which axis to consider when contructing the tree.
+   * @return the root node of the tree.
    */
   public Node buildKDTree(List<User> userList, int depth){
     List<User> sortedList;
 
-    //Select axis based on depth, first use weight.
+    //Select axis based on depth: first use weight. Then, Sort the users based off their weight.
     if (depth % 3 == 0) {
       sortedList = this.sortByWeight(userList);
     }
 
-    //Select axis based on depth, next use weight.
+    //Select axis based on depth: next use height. Then, Sort the users based off their height.
     else if (depth % 3 == 1) {
       sortedList = this.sortByHeight(userList);
     }
 
-    //Select axis based off age, next use age.
+    //Select axis based on depth: last use age. Then, Sort the users based off their age.
     else{
       sortedList = this.sortByAge(userList);
     }
@@ -45,7 +58,7 @@ public class KDTree {
     List<User> beforeMedian = sortedList.subList(0, sortedList.indexOf(median));
     List<User> afterMedian = sortedList.subList(sortedList.indexOf(median)+1, sortedList.size());
 
-    //Add the children to the node
+    //Add the children to the node (finding the children recursively)
     if (node.hasLeft()){
       node.addLeft(this.buildKDTree(beforeMedian, depth+1));
     }
@@ -57,8 +70,8 @@ public class KDTree {
   }
 
 
-  User farthestUser = null;
-  HashMap<User, Double> simUsers = new HashMap<User, Double>();
+
+
   /**
    * This method is called when the user calls the "similar" command (followed by a userID or the
    * weight, height, and age of a new user).
@@ -67,69 +80,79 @@ public class KDTree {
    * @return
    */
   public HashMap<User, Double> getSimilarUsers(int numOfUsers, User user, Node currentNode){
-
-    double straightDistance = Math.sqrt((Math.pow(user.getWeight() - currentNode.getValue().getWeight(), 2)
+    /*Calculate the straight line distance between the given user and the user stored in
+      the current node. */
+    double straightDistance =
+        Math.sqrt((Math.pow(user.getWeight() - currentNode.getValue().getWeight(), 2)
         + Math.pow(user.getHeight() - currentNode.getValue().getHeight(), 2)
         + Math.pow(user.getAge()-currentNode.getValue().getAge(), 2)));
 
-    if (simUsers.size()<numOfUsers){
-      simUsers.put(currentNode.getValue(), straightDistance);
-      if (farthestUser == null || simUsers.get(farthestUser)>straightDistance){
-        farthestUser = currentNode.getValue();
+    //If simUsers is not full yet, put the current user into the map.
+    if (_simUsers.size()<numOfUsers){
+      _simUsers.put(currentNode.getValue(), straightDistance);
+
+      /*Additionally, if the farthest user is null, or the farthest user's distance is less than the
+        distance of the current user, update the farthest user. */
+      if (_farthestUser == null || _simUsers.get(_farthestUser)>straightDistance){
+        _farthestUser = currentNode.getValue();
       }
     }
+
+    //If simUsers is full:
     else {
 
-      //Weight
+      //If the depth of the current node is 0, use the weight component.
       if (currentNode.getDepth()%3 == 0){
-        if (simUsers.get(farthestUser) > Math.abs(currentNode.getValue().getWeight() - user.getWeight())) {
-          getSimilarUsers(numOfUsers, user, currentNode.getLeft());
-          getSimilarUsers(numOfUsers, user, currentNode.getRight());
+
+        /*If the farthest user's distance is greater than the weight distance between the given
+          user and the target user, recur on both children*/
+        if (_simUsers.get(_farthestUser) >
+            Math.abs(currentNode.getValue().getWeight() - user.getWeight())) {
+          this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
+          this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
         }
+
+        //If the current node's weight is less than the target's weight, recur on the right child
         else if (currentNode.getValue().getWeight() < user.getWeight()){
-          getSimilarUsers(numOfUsers, user, currentNode.getRight());
+          this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
         }
+
+        //If the current node's weight is greater than the target weight, recur on the left child
         else if (currentNode.getValue().getWeight() > user.getWeight()){
-          getSimilarUsers(numOfUsers, user, currentNode.getLeft());
+          this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
         }
       }
 
-      //Height
+      //We repeat what the above logic but for height.
       else if (currentNode.getDepth()%3 == 1){
-        if (simUsers.get(farthestUser) > Math.abs(currentNode.getValue().getHeight() - user.getHeight())) {
-          getSimilarUsers(numOfUsers, user, currentNode.getLeft());
+        if (_simUsers.get(_farthestUser) > Math.abs(currentNode.getValue().getHeight() - user.getHeight())) {
+          this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
           getSimilarUsers(numOfUsers, user, currentNode.getRight());
         }
         else if (currentNode.getValue().getHeight() < user.getHeight()){
-          getSimilarUsers(numOfUsers, user, currentNode.getRight());
+          this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
         }
         else if (currentNode.getValue().getHeight() > user.getHeight()){
-          getSimilarUsers(numOfUsers, user, currentNode.getLeft());
+          this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
         }
       }
 
-      //Age
+      //We repeat what the above logic but for age.
       else if (currentNode.getDepth()%3 == 2){
-        if (simUsers.get(farthestUser) > Math.abs(currentNode.getValue().getAge() - user.getAge())) {
-          getSimilarUsers(numOfUsers, user, currentNode.getLeft());
-          getSimilarUsers(numOfUsers, user, currentNode.getRight());
+        if (_simUsers.get(_farthestUser) > Math.abs(currentNode.getValue().getAge() - user.getAge())) {
+          this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
+          this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
         }
         else if (currentNode.getValue().getAge() < user.getAge()){
-          getSimilarUsers(numOfUsers, user, currentNode.getRight());
+          this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
         }
         else if (currentNode.getValue().getAge() > user.getAge()){
-          getSimilarUsers(numOfUsers, user, currentNode.getLeft());
+          this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
         }
       }
     }
 
-    //Get the straight-line distance from the user's coordinates to the current node in the tree
-
-
-    /*If the current node is closer to your target point than one of your k-nearest neighbors, or
-      if your collection of neighbors is not full, update the list */
-
-    return null;
+    return _simUsers;
   }
 
 
@@ -192,6 +215,10 @@ public class KDTree {
       }
     }
     return sortedList;
+  }
+
+  public Node getRoot(){
+    return _root;
   }
 
 }
