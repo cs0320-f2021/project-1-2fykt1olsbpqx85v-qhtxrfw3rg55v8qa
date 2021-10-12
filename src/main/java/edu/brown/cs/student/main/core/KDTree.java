@@ -1,7 +1,6 @@
 package edu.brown.cs.student.main.core;
 
 import edu.brown.cs.student.main.DataTypes.User;
-import edu.brown.cs.student.main.core.Node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,8 +11,6 @@ public class KDTree {
   private Node _root; //Stores the root of the tree.
   private User _farthestUser = null; //The farthest user from a given user.
 
-<<<<<<< HEAD:src/main/java/edu/brown/cs/student/main/core/KDTree.java
-=======
   /*simUsers is a HashMap, with Users as keys and the distance between a given user and a target
     User as the value. */
   private HashMap<User, Double> _simUsers = new HashMap<User, Double>();
@@ -23,7 +20,7 @@ public class KDTree {
    * called every time the command "users <filepath>" is called.
    * @param userList a list of users that will be used to construct a new KD Tree.
    */
->>>>>>> ac6cb10d0f2a99ba4dee31d18ca54371aa93ef6b:src/main/java/edu/brown/cs/student/main/KDTree.java
+
   public KDTree(ArrayList<User> userList){
     _root = this.buildKDTree(userList, 0);
 
