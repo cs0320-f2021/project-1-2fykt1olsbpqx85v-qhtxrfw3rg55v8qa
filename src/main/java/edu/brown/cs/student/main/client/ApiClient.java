@@ -23,7 +23,7 @@ public class ApiClient {
 
     }
 
-    public void makeRequest(HttpRequest req) {
+    public String makeRequest(HttpRequest req) {
 
         try {
             HttpResponse<String> apiResponse = client.send(req, HttpResponse.BodyHandlers.ofString());
@@ -47,5 +47,6 @@ public class ApiClient {
             System.out.println("There was a security configuration error.");
             System.out.println(se.getMessage());
         }
+        return null;
     }
 }

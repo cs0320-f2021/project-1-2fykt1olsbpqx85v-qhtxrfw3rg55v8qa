@@ -1,8 +1,10 @@
-package edu.brown.cs.student.main;
+package edu.brown.cs.student.main.DataTypes;
+
+import edu.brown.cs.student.main.core.FileParser;
 
 import java.util.Dictionary;
 
-public class User implements Parser{
+public class User extends FileParser {
 
   private Dictionary<String, String> _line;
   private int _userID;

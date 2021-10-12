@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main;
+package edu.brown.cs.student.main.main;
 
 import com.google.gson.Gson;
 

@@ -1,15 +1,17 @@
-package edu.brown.cs.student.main;
+package edu.brown.cs.student.main.core;
+
+import edu.brown.cs.student.main.DataTypes.User;
+import edu.brown.cs.student.main.core.Node;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.PriorityQueue;
 
-public class Predictor {
+public class KDTree {
 
   private Node _root;
 
-  public Predictor(ArrayList<User> userList){
+  public KDTree(ArrayList<User> userList){
     _root = this.buildKDTree(userList, 0);
   }
 

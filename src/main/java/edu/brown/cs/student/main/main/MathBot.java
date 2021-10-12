@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main.core;
+package edu.brown.cs.student.main.main;
 
 public class MathBot {
 

@@ -3,6 +3,9 @@ package edu.brown.cs.student.main;
 
 
 import java.io.IOException;
+
+import edu.brown.cs.student.main.DataTypes.User;
+import edu.brown.cs.student.main.main.UserArray;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

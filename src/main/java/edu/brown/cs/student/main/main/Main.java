@@ -1,4 +1,4 @@
-package edu.brown.cs.student.main.core;
+package edu.brown.cs.student.main.main;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,7 +13,6 @@ import java.util.Random;
 
 import com.google.common.collect.ImmutableMap;
 
-import edu.brown.cs.student.main.client.ApiClient;
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
