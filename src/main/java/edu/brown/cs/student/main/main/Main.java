@@ -197,7 +197,13 @@ public final class Main {
             }
           }
           // fill in with Api request repl
+          if (arguments[0].equals("users")) {
+            arguments[1].JsonFileReader
+          }
+          if (arguments[0].equals("similar") && arguments.length == 2) {
 
+
+          }
         } catch (Exception e) {
           e.printStackTrace();
           System.out.println("ERROR: We couldn't process your input");
