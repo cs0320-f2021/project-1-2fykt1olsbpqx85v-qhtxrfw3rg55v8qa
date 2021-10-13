@@ -205,26 +205,31 @@ public final class Main {
           // fill in with Api request repl
           if (arguments[0].equals("users") && arguments.length == 2) {
             FileParser fp = new FileParser(arguments[1]);
-            _tree = new KDTree(fp.stringConverter());
+            _tree = new KDTree(fp.linesToUsers());
             _tree.buildKDTree(0);
+            if (_tree.getRoot() != null){
+              System.out.println("File is successfully loaded!");
+            }
+
+            else{
+              System.out.println("ERROR: Tree is not built.");
+            }
 
           }
 
           if (arguments[0].equals("similar")) {
             if (arguments.length == 3) {
               User user = _tree.findUser(Integer.parseInt(arguments[1]));
-              Node node = new Node(user);
               HashMap<User, Double> sim_users =
-                  _tree.getSimilarUsers(Integer.parseInt(arguments[1]), user, node);
+                  _tree.getSimilarUsers(Integer.parseInt(arguments[1]), user, _tree.getRoot());
               for (User key : sim_users.keySet()) {
                 System.out.println(key.getUserID());
               }
             } else if (arguments.length == 5) {
               User user = new User(Integer.parseInt(arguments[2]), Integer.parseInt(arguments[3]),
                   Integer.parseInt(arguments[4]));
-              Node node = new Node(user);
               HashMap<User, Double> sim_users =
-                  _tree.getSimilarUsers(Integer.parseInt(arguments[1]), user, node);
+                  _tree.getSimilarUsers(Integer.parseInt(arguments[1]), user, _tree.getRoot());
               for (User key : sim_users.keySet()) {
                 System.out.println(key.getUserID());
               }

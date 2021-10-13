@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class FileParser {
 
-    private BufferedReader bufRead = null;
+    private BufferedReader _bufRead = null;
 
     /**
      * A FP constructor.
@@ -24,8 +24,10 @@ public class FileParser {
      * @param file - a String file path
      */
     public FileParser(String file) {
+
         try {
-            this.bufRead = new BufferedReader(new FileReader(file));
+            this._bufRead = new BufferedReader(new FileReader(file));
+
         } catch (FileNotFoundException f) {
             System.out.println("ERROR: File not found");
         }
@@ -36,11 +38,16 @@ public class FileParser {
      *
      * @return a read String line
      */
-    public String readNewLine() {
-        if (bufRead != null) {
+    public ArrayList<String> readLines() {
+        if (_bufRead != null) {
             try {
-                String ln = bufRead.readLine();
-                return ln;
+                ArrayList<String> lineList = new ArrayList<>();
+                String curr;
+                while ((curr = _bufRead.readLine()) != null){
+                    lineList.add(curr);
+                }
+                return lineList;
+
             } catch (IOException e) {
                 System.out.println("ERROR: Read");
                 return null;
@@ -50,16 +57,16 @@ public class FileParser {
         }
     }
 
-    public ArrayList<User> stringConverter(){
-        ArrayList<User> userArrayList = new ArrayList<>();
-        String data = this.readNewLine();
-        HashMap<Integer, ArrayList<String>> userHashmap = new HashMap<Integer, ArrayList<String>>();
-       String[] dataArray = data.split("},");
-       for (String userString : dataArray) {
-           User user = new User(userString);
-           userArrayList.add(user);
+    public ArrayList<User> linesToUsers(){
+        ArrayList<String> data = this.readLines();
+        //System.out.println("Size of data: " + data.size());
+        ArrayList<User> userList = new ArrayList<>();
+
+       for (String item : data) {
+           User user = new User(item);
+           userList.add(user);
        }
 
-       return userArrayList;
+       return userList;
     }
 }
