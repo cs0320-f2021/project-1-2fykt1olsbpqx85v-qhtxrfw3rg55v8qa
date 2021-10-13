@@ -2,14 +2,14 @@ package edu.brown.cs.student.main.core;
 
 import edu.brown.cs.student.main.DataTypes.User;
 
-public class Node {
+public class Node<E> {
 
   private Node _parent = null;
-  private final User _value;
+  private final E _value;
   private Node _left = null;
   private Node _right = null;
 
-  public Node(User value) {
+  public Node(E value) {
     _value = value;
   }
 
@@ -44,7 +44,7 @@ public class Node {
   }
 
 
-  public User getValue(){
+  public E getValue(){
     return _value;
   }
 

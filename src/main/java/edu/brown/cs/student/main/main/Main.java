@@ -206,7 +206,6 @@ public final class Main {
           if (arguments[0].equals("users") && arguments.length == 2) {
             FileParser fp = new FileParser(arguments[1]);
             _tree = new KDTree(fp.linesToUsers());
-            _tree.buildKDTree(0);
             if (_tree.getRoot() != null){
               System.out.println("File is successfully loaded!");
             }

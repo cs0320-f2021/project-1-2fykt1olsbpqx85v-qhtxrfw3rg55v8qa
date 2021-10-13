@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class KDTree {
 
-  private Node _root; //Stores the root of the tree.
+  private Node<User> _root; //Stores the root of the tree.
   private User _farthestUser = null; //The farthest user from a given user.
 
   /*simUsers is a HashMap, with Users as keys and the distance between a given user and a target
@@ -26,7 +26,7 @@ public class KDTree {
 
   public KDTree(ArrayList<User> userList){
     _userList = userList;
-
+    _root = this.buildKDTree(0);
   }
 
   public User findUser(int id) {
@@ -43,7 +43,7 @@ public class KDTree {
    * @param depth the depth indicates which axis to consider when contructing the tree.
    * @return the root node of the tree.
    */
-  public Node buildKDTree(int depth){
+  public Node<User> buildKDTree(int depth){
     List<User> sortedList;
 
     //Select axis based on depth: first use weight. Then, Sort the users based off their weight.
@@ -65,7 +65,7 @@ public class KDTree {
     User median = sortedList.get(_userList.size()/2);
 
     //Create a node with median as the value
-    Node node = new Node(median);
+    Node<User> node = new Node(median);
 
     //Split userList into users that came before the median, and users that came after it.
     List<User> beforeMedian = sortedList.subList(0, sortedList.indexOf(median));
@@ -92,7 +92,7 @@ public class KDTree {
    * @param user the given user
    * @return
    */
-  public HashMap<User, Double> getSimilarUsers(int numOfUsers, User user, Node currentNode){
+  public HashMap<User, Double> getSimilarUsers(int numOfUsers, User user, Node<User> currentNode){
     /*Calculate the straight line distance between the given user and the user stored in
       the current node. */
     double straightDistance =
@@ -183,47 +183,28 @@ public class KDTree {
    */
 
   public HashMap<String, Integer> classify(int k, User user) {
-
     //initializing
-
     HashMap<String, Integer> star_counter = new HashMap<String, Integer>();
-
     star_counter.put("Aries",0);
-
     star_counter.put("Taurus",0);
-
     star_counter.put("Gemini",0);
-
     star_counter.put("Cancer",0);
-
     star_counter.put("Leo",0);
-
     star_counter.put("Virgo",0);
-
     star_counter.put("Libra",0);
-
     star_counter.put("Scorpio",0);
-
     star_counter.put("Sagittarius",0);
-
     star_counter.put("Capricorn",0);
-
     star_counter.put("Aquarius",0);
-
     star_counter.put("Pisces",0);
 
     //edits the hashmap with the proper values
-
     HashMap<User, Double> hashmap_ = new HashMap<User, Double>(getSimilarUsers(k, user, _root));
-
     for (Map.Entry<User, Double> entry : hashmap_.entrySet()) {
-
       star_counter.replace(entry.getKey().getHoroscope(), star_counter.get(entry.getKey().getHoroscope()) + 1);
-
     }
 
     return star_counter;
-
   }
 
 
@@ -288,7 +269,7 @@ public class KDTree {
     return sortedList;
   }
 
-  public Node getRoot(){
+  public Node<User> getRoot(){
     return _root;
   }
 

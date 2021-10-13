@@ -13,9 +13,6 @@ public class UserTest {
   public UserTest(){
     FileParser fp = new FileParser("data/project-1/justusersSMALL.json");
     _userArray = fp.linesToUsers();
-    for (User u: _userArray){
-      u.printUserData();
-    }
   }
 
 
