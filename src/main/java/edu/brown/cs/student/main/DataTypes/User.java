@@ -15,6 +15,7 @@ public class User extends FileParser {
 
 
   public User(Dictionary<String, String> line){
+    super();
     _line = line;
     this.readLine(line);
 

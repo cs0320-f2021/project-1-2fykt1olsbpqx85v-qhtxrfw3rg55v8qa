@@ -25,6 +25,7 @@ public class FileParser {
             System.out.println("ERROR: File not found");
         }
     }
+    
 
     /**
      * Reads a new line in the file and returns a String.

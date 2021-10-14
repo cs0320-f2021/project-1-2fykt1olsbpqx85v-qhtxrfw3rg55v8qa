@@ -198,7 +198,7 @@ public final class Main {
           }
           // fill in with Api request repl
           if (arguments[0].equals("users")) {
-            arguments[1].JsonFileReader
+            arguments[1].FileParser
           }
           if (arguments[0].equals("similar") && arguments.length == 2) {
 
