@@ -1,48 +1,87 @@
 package edu.brown.cs.student.main;
 
-
-
-import java.io.IOException;
-
 import edu.brown.cs.student.main.DataTypes.User;
-import edu.brown.cs.student.main.main.UserArray;
+import edu.brown.cs.student.main.core.FileParser;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+import java.util.ArrayList;
 import static org.junit.Assert.assertTrue;
-
 
 public class UserTest {
 
-  private User _user1;
+  private ArrayList<User> _userArray;
 
-  public UserTest() throws IOException {
-    _user1 = new User(new UserArray("data/project-1/justusersSMALL.json").getUserArray().get(0));
+  public UserTest(){
+    FileParser fp = new FileParser("data/project-1/justusersSMALL.json");
+    _userArray = fp.linesToUsers();
+  }
 
+
+  @Test
+  public void userArraySize(){
+    assertTrue(_userArray.size() == 15);
+  }
+
+
+  @Test
+  public void firstUserID(){
+    User firstUser = _userArray.get(0);
+    assertTrue(firstUser.getUserID() == 151944);
   }
 
   @Test
-  public void testGetUserID(){
-    assertEquals(_user1.getUserID(), 151944);
+  public void firstUserWeight(){
+    User firstUser = _userArray.get(0);
+    assertTrue(firstUser.getWeight() == 145);
   }
 
   @Test
-  public void testGetWeight(){
-    assertEquals(_user1.getWeight(), 145);
+  public void firstUserHeight(){
+    User firstUser = _userArray.get(0);
+    assertTrue(firstUser.getHeight() == 69);
   }
 
   @Test
-  public void testGetHeight(){
-    assertTrue(_user1.getHeight() == 5 + (double) (9/12));
+  public void firstUserAge(){
+    User firstUser = _userArray.get(0);
+    assertTrue(firstUser.getAge() == 27);
   }
 
   @Test
-  public void testGetAge(){
-    assertEquals(_user1.getAge(), 27);
+  public void firstUserHoroscope(){
+    User firstUser = _userArray.get(0);
+    assertTrue(firstUser.getHoroscope().equals("Libra"));
   }
 
   @Test
-  public void testGetHoroscope(){
-    assertTrue(_user1.getHoroscope().equals("Libra"));
+  public void lastUserID(){
+    User firstUser = _userArray.get(14);
+    assertTrue(firstUser.getUserID() == 909926);
   }
+
+  @Test
+  public void lastUserWeight(){
+    User firstUser = _userArray.get(14);
+    assertTrue(firstUser.getWeight() == 135);
+  }
+
+  @Test
+  public void lastUserHeight(){
+    User firstUser = _userArray.get(14);
+    assertTrue(firstUser.getHeight() == 65);
+  }
+
+  @Test
+  public void lastUserAge(){
+    User firstUser = _userArray.get(14);
+    assertTrue(firstUser.getAge() == 34);
+  }
+
+  @Test
+  public void lastUserHoroscope(){
+    User firstUser = _userArray.get(14);
+    assertTrue(firstUser.getHoroscope().equals("Libra"));
+  }
+
+
 
 }

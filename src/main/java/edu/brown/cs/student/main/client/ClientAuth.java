@@ -8,13 +8,13 @@ import edu.brown.cs.student.main.core.FileParser;
 public class ClientAuth {
 
     /**
-     * Reads the API Key from the secret text file where we have stored it. Refer to the handout for more on security
-     * practices.
+     * Reads the API Key from the secret text file where we have stored it. Refer to the handout
+     * for more on security practices.
      *
      * @return a String of the api key.
      */
     public static String getApiKey() {
         FileParser parser = new FileParser("config/secret/apikey.txt");
-        return parser.readNewLine();
+        return parser.readLines().get(0);
     }
 }

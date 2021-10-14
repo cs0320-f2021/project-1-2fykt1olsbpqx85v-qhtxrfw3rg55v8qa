@@ -8,11 +8,16 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
 import com.google.common.collect.ImmutableMap;
 
+import edu.brown.cs.student.main.DataTypes.User;
+import edu.brown.cs.student.main.core.FileParser;
+import edu.brown.cs.student.main.core.KDTree;
+import edu.brown.cs.student.main.core.Node;
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
@@ -31,6 +36,7 @@ public final class Main {
 
   // use port 4567 by default when running server
   private static final int DEFAULT_PORT = 4567;
+  private KDTree _tree;
 
   /**
    * The initial method called when execution begins.
@@ -197,13 +203,59 @@ public final class Main {
             }
           }
           // fill in with Api request repl
-          if (arguments[0].equals("users")) {
-            arguments[1].FileParser
+          if (arguments[0].equals("users") && arguments.length == 2) {
+            FileParser fp = new FileParser(arguments[1]);
+            _tree = new KDTree(fp.linesToUsers());
+            if (_tree.getRoot() != null){
+              System.out.println("File is successfully loaded!");
+            }
+
+            else{
+              System.out.println("ERROR: Tree is not built.");
+            }
+
           }
-          if (arguments[0].equals("similar") && arguments.length == 2) {
+
+          if (arguments[0].equals("similar")) {
+            if (arguments.length == 3) {
+              User user = _tree.findUser(Integer.parseInt(arguments[1]));
+              HashMap<User, Double> sim_users =
+                  _tree.getSimilarUsers(Integer.parseInt(arguments[1]), user, _tree.getRoot());
+              for (User key : sim_users.keySet()) {
+                System.out.println(key.getUserID());
+              }
+            } else if (arguments.length == 5) {
+              User user = new User(Integer.parseInt(arguments[2]), Integer.parseInt(arguments[3]),
+                  Integer.parseInt(arguments[4]));
+              HashMap<User, Double> sim_users =
+                  _tree.getSimilarUsers(Integer.parseInt(arguments[1]), user, _tree.getRoot());
+              for (User key : sim_users.keySet()) {
+                System.out.println(key.getUserID());
+              }
+            }
+          }
+
+          if (arguments[0].equals("classify")) {
+            if (arguments.length == 3) {
+              User user = _tree.findUser(Integer.parseInt(arguments[2]));
+              HashMap<String, Integer> classify_map = _tree.classify(Integer.parseInt(arguments[1]), user);
+              for (String key : classify_map.keySet()) {
+                System.out.println(key + ": " + classify_map.get(key));
+              }
+            }
+            else if (arguments.length == 5) {
+              User user = new User(Integer.parseInt(arguments[2]), Integer.parseInt(arguments[3]),
+                  Integer.parseInt(arguments[4]));
+              HashMap<String, Integer> classify_map = _tree.classify(Integer.parseInt(arguments[1]), user);
+              for (String key : classify_map.keySet()) {
+                System.out.println(key + ": " + classify_map.get(key)); }
 
 
+            }
           }
+
+
+
         } catch (Exception e) {
           e.printStackTrace();
           System.out.println("ERROR: We couldn't process your input");

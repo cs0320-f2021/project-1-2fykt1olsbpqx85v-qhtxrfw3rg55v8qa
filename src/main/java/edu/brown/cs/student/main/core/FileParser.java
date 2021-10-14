@@ -1,16 +1,22 @@
 package edu.brown.cs.student.main.core;
 
+import edu.brown.cs.student.main.DataTypes.User;
+
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * A generic file parser.
  */
 public class FileParser {
 
-    private BufferedReader bufRead = null;
+    private BufferedReader _bufRead = null;
 
     /**
      * A FP constructor.
@@ -20,7 +26,8 @@ public class FileParser {
     public FileParser(String file) {
 
         try {
-            this.bufRead = new BufferedReader(new FileReader(file));
+            this._bufRead = new BufferedReader(new FileReader(file));
+
         } catch (FileNotFoundException f) {
             System.out.println("ERROR: File not found");
         }
@@ -32,11 +39,16 @@ public class FileParser {
      *
      * @return a read String line
      */
-    public String readNewLine() {
-        if (bufRead != null) {
+    public ArrayList<String> readLines() {
+        if (_bufRead != null) {
             try {
-                String ln = bufRead.readLine();
-                return ln;
+                ArrayList<String> lineList = new ArrayList<>();
+                String curr;
+                while ((curr = _bufRead.readLine()) != null){
+                    lineList.add(curr);
+                }
+                return lineList;
+
             } catch (IOException e) {
                 System.out.println("ERROR: Read");
                 return null;
@@ -44,5 +56,18 @@ public class FileParser {
         } else {
             return null;
         }
+    }
+
+    public ArrayList<User> linesToUsers(){
+        ArrayList<String> data = this.readLines();
+        //System.out.println("Size of data: " + data.size());
+        ArrayList<User> userList = new ArrayList<>();
+
+       for (String item : data) {
+           User user = new User(item);
+           userList.add(user);
+       }
+
+       return userList;
     }
 }
