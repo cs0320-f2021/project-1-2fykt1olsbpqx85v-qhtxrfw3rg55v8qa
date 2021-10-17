@@ -1,7 +1,5 @@
 package edu.brown.cs.student.main.core;
 
-import edu.brown.cs.student.main.DataTypes.User;
-
 public class Node<E> {
 
   private Node _parent = null;
