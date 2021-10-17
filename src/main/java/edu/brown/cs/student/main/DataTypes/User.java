@@ -12,11 +12,6 @@ public class User {
   public User(String userString){
     String[] userArray = userString.split(" ");
 
-    for (String s: userArray){
-      System.out.println(userArray);
-    }
-
-
     try {
 
       _userID = Integer.parseInt(userArray[1].substring(1, userArray[1].length()-2));

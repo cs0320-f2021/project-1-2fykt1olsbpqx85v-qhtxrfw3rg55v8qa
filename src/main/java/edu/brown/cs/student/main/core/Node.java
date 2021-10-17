@@ -13,15 +13,15 @@ public class Node<E> {
     _value = value;
   }
 
-  public Node getParent(){
+  public Node<E> getParent(){
     return _parent;
   }
 
-  public Node getLeft(){
+  public Node<E> getLeft(){
     return _left;
   }
 
-  public Node getRight(){
+  public Node<E> getRight(){
     return _right;
   }
 

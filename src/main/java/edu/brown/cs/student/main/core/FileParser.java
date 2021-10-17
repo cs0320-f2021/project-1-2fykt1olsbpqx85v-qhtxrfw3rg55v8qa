@@ -59,7 +59,6 @@ public class FileParser {
 
     public ArrayList<User> linesToUsers(){
         ArrayList<String> data = this.readLines();
-        //System.out.println("Size of data: " + data.size());
         ArrayList<User> userList = new ArrayList<>();
 
        for (String item : data) {

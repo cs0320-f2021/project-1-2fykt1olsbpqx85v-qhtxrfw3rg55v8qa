@@ -2,6 +2,7 @@ package edu.brown.cs.student.main.core;
 
 import edu.brown.cs.student.main.DataTypes.User;
 import freemarker.log._Log4jLoggerFactory;
+import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ public class KDTree {
 
   private Node<User> _root; //Stores the root of the tree.
   private User _farthestUser = null; //The farthest user from a given user.
+  private ArrayList<Node<User>> _nodes; //All the nodes of the tree.
 
   /*simUsers is a HashMap, with Users as keys and the distance between a given user and a target
     User as the value. */
@@ -19,14 +21,15 @@ public class KDTree {
   private ArrayList<User> _userList;
 
   /**
-   * The KDTree constructor. It builds the KDTree, and initializes its root. A new KDTree should be
-   * called every time the command "users <filepath>" is called.
+   * The KDTree constructor. It builds the KDTree, and initializes its root. A new KDTree should
+   * be called every time the command "users <filepath>" is called.
    * @param userList a list of users that will be used to construct a new KD Tree.
    */
 
   public KDTree(ArrayList<User> userList){
     _userList = userList;
-    _root = this.buildKDTree(0);
+    _nodes = new ArrayList<>();
+    _root = this.buildKDTree(_userList, 0);
   }
 
   public User findUser(int id) {
@@ -38,45 +41,62 @@ public class KDTree {
     return null;
   }
 
+
   /**
    * This method builds a new KDTree, in 3 dimensions.
    * @param depth the depth indicates which axis to consider when contructing the tree.
    * @return the root node of the tree.
    */
-  public Node<User> buildKDTree(int depth){
+  public Node<User> buildKDTree(ArrayList<User> userList, int depth){
     List<User> sortedList;
 
     //Select axis based on depth: first use weight. Then, Sort the users based off their weight.
     if (depth % 3 == 0) {
-      sortedList = this.sortByWeight(_userList);
+      sortedList = this.sortByWeight(userList);
     }
 
     //Select axis based on depth: next use height. Then, Sort the users based off their height.
     else if (depth % 3 == 1) {
-      sortedList = this.sortByHeight(_userList);
+      sortedList = this.sortByHeight(userList);
     }
 
     //Select axis based on depth: last use age. Then, Sort the users based off their age.
     else{
-      sortedList = this.sortByAge(_userList);
+      sortedList = this.sortByAge(userList);
     }
 
     //Choose the median in pointList as the pivot element.
-    User median = sortedList.get(_userList.size()/2);
+    User median = sortedList.get(userList.size()/2);
 
     //Create a node with median as the value
     Node<User> node = new Node(median);
+    _nodes.add(node);
 
     //Split userList into users that came before the median, and users that came after it.
-    List<User> beforeMedian = sortedList.subList(0, sortedList.indexOf(median));
-    List<User> afterMedian = sortedList.subList(sortedList.indexOf(median)+1, sortedList.size());
+    ArrayList<User> beforeMedian = new ArrayList<>();
+    ArrayList<User> afterMedian = new ArrayList<>();
+
+    //For all users in the sorted list,
+    for (int i = 0; i<sortedList.size(); i++){
+
+      /*if the current user is before the median (and is not the median user), add it to the
+        */
+      if (i < userList.size()/2 && sortedList.get(i) != median){
+        beforeMedian.add(sortedList.get(i));
+      }
+
+      else if (i > userList.size()/2 && sortedList.get(i) != median){
+        afterMedian.add(sortedList.get(i));
+      }
+    }
 
     //Add the children to the node (finding the children recursively)
-    if (node.hasLeft()){
-      node.addLeft(this.buildKDTree(depth+1));
+    if (!beforeMedian.isEmpty() && !node.hasLeft()) {
+      node.addLeft(this.buildKDTree(beforeMedian, depth + 1));
     }
-    if (node.hasRight()){
-      node.addRight(this.buildKDTree(depth+1));
+
+    if (!beforeMedian.isEmpty() && !node.hasRight()){
+      node.addRight(this.buildKDTree(afterMedian, depth+1));
     }
 
     return node;
@@ -111,57 +131,81 @@ public class KDTree {
       }
     }
 
-    //If simUsers is full:
-    else {
 
-      //If the depth of the current node is 0, use the weight component.
-      if (currentNode.getDepth()%3 == 0){
 
-        /*If the farthest user's distance is greater than the weight distance between the given
-          user and the target user, recur on both children*/
-        if (_simUsers.get(_farthestUser) >
-            Math.abs(currentNode.getValue().getWeight() - user.getWeight())) {
+    //If the depth of the current node is 0, use the weight component.
+    if (currentNode.getDepth()%3 == 0){
+
+      /*If the farthest user's distance is greater than the weight distance between the given
+        user and the target user, recur on both children*/
+      if (_simUsers.get(_farthestUser) >
+          Math.abs(currentNode.getValue().getWeight() - user.getWeight())) {
+
+        if (currentNode.hasLeft()){
           this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
-          this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
         }
 
-        //If the current node's weight is less than the target's weight, recur on the right child
-        else if (currentNode.getValue().getWeight() < user.getWeight()){
+        if (currentNode.hasRight()){
           this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
-        }
-
-        //If the current node's weight is greater than the target weight, recur on the left child
-        else if (currentNode.getValue().getWeight() > user.getWeight()){
-          this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
         }
       }
 
-      //We repeat what the above logic but for height.
-      else if (currentNode.getDepth()%3 == 1){
-        if (_simUsers.get(_farthestUser) > Math.abs(currentNode.getValue().getHeight() - user.getHeight())) {
+      //If the current node's weight is less than the target's weight, recur on the right child
+      else if (currentNode.getValue().getWeight() < user.getWeight() && currentNode.hasRight()){
+        this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
+      }
+
+      //If the current node's weight is greater than the target weight, recur on the left child
+      else if (currentNode.getValue().getWeight() > user.getWeight() && currentNode.hasLeft()){
+        this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
+      }
+    }
+
+    //We repeat the above logic but for height.
+    else if (currentNode.getDepth()%3 == 1){
+
+      if (_simUsers.get(_farthestUser) >
+          Math.abs(currentNode.getValue().getHeight() - user.getHeight())) {
+
+        if (currentNode.hasLeft()){
           this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
-          getSimilarUsers(numOfUsers, user, currentNode.getRight());
         }
-        else if (currentNode.getValue().getHeight() < user.getHeight()){
+
+        if (currentNode.hasRight()){
           this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
-        }
-        else if (currentNode.getValue().getHeight() > user.getHeight()){
-          this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
         }
       }
 
-      //We repeat what the above logic but for age.
-      else if (currentNode.getDepth()%3 == 2){
-        if (_simUsers.get(_farthestUser) > Math.abs(currentNode.getValue().getAge() - user.getAge())) {
+      else if (currentNode.getValue().getHeight() < user.getHeight() && currentNode.hasRight()){
+        this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
+      }
+
+      else if (currentNode.getValue().getHeight() > user.getHeight() && currentNode.hasLeft()){
+        this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
+      }
+    }
+
+    //We repeat the above logic but for age.
+    else if (currentNode.getDepth()%3 == 2){
+
+      if (_simUsers.get(_farthestUser) >
+          Math.abs(currentNode.getValue().getAge() - user.getAge())) {
+
+        if (currentNode.hasLeft()){
           this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
+        }
+
+        if (currentNode.hasRight()){
           this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
         }
-        else if (currentNode.getValue().getAge() < user.getAge()){
-          this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
-        }
-        else if (currentNode.getValue().getAge() > user.getAge()){
-          this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
-        }
+      }
+
+      else if (currentNode.getValue().getAge() < user.getAge() && currentNode.hasRight()){
+        this.getSimilarUsers(numOfUsers, user, currentNode.getRight());
+      }
+
+      else if (currentNode.getValue().getAge() > user.getAge() && currentNode.hasLeft()){
+        this.getSimilarUsers(numOfUsers, user, currentNode.getLeft());
       }
     }
 
@@ -169,21 +213,17 @@ public class KDTree {
   }
 
   /**
-
+   * This method looks at all the similar users of a given user, and creates a hashmap that
+   * keeps track of the star signs of all the similar users.
    *
-
    * @param k: number of star sign predictions we want to make
-
    * @param user: the user whose star sign we want to predict
-
    * @return: a hashmap with star signs for keys and the number of people we found with
-
    * that star sign, given we searched for the k most similar people
-
    */
-
   public HashMap<String, Integer> classify(int k, User user) {
-    //initializing
+
+    //Initialize the hashmap.
     HashMap<String, Integer> star_counter = new HashMap<String, Integer>();
     star_counter.put("Aries",0);
     star_counter.put("Taurus",0);
@@ -198,10 +238,11 @@ public class KDTree {
     star_counter.put("Aquarius",0);
     star_counter.put("Pisces",0);
 
-    //edits the hashmap with the proper values
-    HashMap<User, Double> hashmap_ = new HashMap<User, Double>(getSimilarUsers(k, user, _root));
+    //Edit the hashmap with the proper values
+    HashMap<User, Double> hashmap_ = new HashMap(getSimilarUsers(k, user, _root));
     for (Map.Entry<User, Double> entry : hashmap_.entrySet()) {
-      star_counter.replace(entry.getKey().getHoroscope(), star_counter.get(entry.getKey().getHoroscope()) + 1);
+      star_counter.replace(entry.getKey().getHoroscope(),
+          star_counter.get(entry.getKey().getHoroscope()) + 1);
     }
 
     return star_counter;
@@ -209,20 +250,27 @@ public class KDTree {
 
 
   /**
-   * This method sorts the users in three turns: by weight, height, and age. I used insertion sort
-   * as it is simpler to code.
+   * This method sorts the given list of users from smallest weight to biggest weight.
+   * @param userList the given user list
+   * @return a new list, sorted by weight
    */
-  public List<User> sortByWeight(List<User> list) {
-    List<User> sortedList = list;
-    for (int i = 0; i < sortedList.size(); i++) {
-      for (int j = i; j < 0; j--) {
+  public ArrayList<User> sortByWeight(ArrayList<User> userList) {
+    ArrayList<User> sortedList = userList;
 
-        //Sort the weight
-        if (sortedList.get(j).getWeight() > sortedList.get(j - 1).getWeight()) {
+    //Iterate through the list from the first to the last element.
+    for (int i = 0; i < sortedList.size(); i++) {
+
+      //Iterate through the list from the ith element to the first element
+      for (int j = i; j > 0; j--) {
+
+        /*if the weight of the jth element is smaller than the weight of the element before the jth
+          element, swap the two. */
+        if (sortedList.get(j).getWeight() < sortedList.get(j - 1).getWeight()) {
           User max = sortedList.get(j);
           sortedList.set(j, sortedList.get(j - 1));
           sortedList.set(j - 1, max);
         }
+
         else {
           break;
         }
@@ -232,17 +280,29 @@ public class KDTree {
   }
 
 
-  public List<User> sortByHeight(List<User> list) {
-    List<User> sortedList = list;
-    for (int i = 0; i < sortedList.size(); i++) {
-      for (int j = i; j < 0; j--) {
+  /**
+   * This method sorts a given list of users by height, from smallest to biggest.
+   * @param userList the given list
+   * @return a new list, sorted by height
+   */
+  public ArrayList<User> sortByHeight(ArrayList<User> userList) {
+    ArrayList<User> sortedList = userList;
 
-        //Sort the weight
-        if (sortedList.get(j).getHeight() > sortedList.get(j - 1).getHeight()) {
+    //Iterate through the list from the first to the last element.
+    for (int i = 0; i < sortedList.size(); i++) {
+
+      //Iterate through the list from the ith element to the first element
+      for (int j = i; j > 0; j--) {
+
+        /*if the height of the jth element is smaller than the height of the element before the jth
+          element, swap the two. */
+        if (sortedList.get(j).getHeight() < sortedList.get(j - 1).getHeight()) {
           User max = sortedList.get(j);
           sortedList.set(j, sortedList.get(j - 1));
           sortedList.set(j - 1, max);
-        } else {
+        }
+
+        else {
           break;
         }
       }
@@ -251,17 +311,29 @@ public class KDTree {
   }
 
 
-  public List<User> sortByAge(List<User> list) {
-    List<User> sortedList = list;
-    for (int i = 0; i < sortedList.size(); i++) {
-      for (int j = i; j < 0; j--) {
+  /**
+   * This method sorts a given list of users by age, from youngest to oldest.
+   * @param userList the given list
+   * @return a new list, sorted by age
+   */
+  public ArrayList<User> sortByAge(ArrayList<User> userList) {
+    ArrayList<User> sortedList = userList;
 
-        //Sort the weight
-        if (sortedList.get(j).getAge() > sortedList.get(j - 1).getAge()) {
+    //Iterate through the list from the first to the last element.
+    for (int i = 0; i < sortedList.size(); i++) {
+
+      //Iterate through the list from the ith element to the first element
+      for (int j = i; j > 0; j--) {
+
+        /*if the age of the jth element is smaller than the age of the element before the jth
+          element, swap the two. */
+        if (sortedList.get(j).getAge() < sortedList.get(j - 1).getAge()) {
           User max = sortedList.get(j);
           sortedList.set(j, sortedList.get(j - 1));
           sortedList.set(j - 1, max);
-        } else {
+        }
+
+        else {
           break;
         }
       }
@@ -269,8 +341,20 @@ public class KDTree {
     return sortedList;
   }
 
+  /**
+   * This method returns the root of the tree.
+   * @return root
+   */
   public Node<User> getRoot(){
     return _root;
+  }
+
+  /**
+   * This method returns a list of all the nodes in the tree.
+   * @return list of nodes
+   */
+  public ArrayList<Node<User>> getNodes(){
+    return _nodes;
   }
 
 }

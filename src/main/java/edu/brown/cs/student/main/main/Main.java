@@ -202,12 +202,13 @@ public final class Main {
               System.out.println(starID);
             }
           }
+
           // fill in with Api request repl
           if (arguments[0].equals("users") && arguments.length == 2) {
             FileParser fp = new FileParser(arguments[1]);
             _tree = new KDTree(fp.linesToUsers());
             if (_tree.getRoot() != null){
-              System.out.println("File is successfully loaded!");
+              System.out.println("Loaded " + _tree.getNodes().size() + " user(s) from " + arguments[1]);
             }
 
             else{
@@ -216,15 +217,27 @@ public final class Main {
 
           }
 
+
           if (arguments[0].equals("similar")) {
+
+            //If the given command is "similar k user_id":
             if (arguments.length == 3) {
-              User user = _tree.findUser(Integer.parseInt(arguments[1]));
+
+              //First, find the user that corresponds to the user id
+              User user = _tree.findUser(Integer.parseInt(arguments[2]));
+
+              //Now, initialize the hashmap of nearest users
               HashMap<User, Double> sim_users =
                   _tree.getSimilarUsers(Integer.parseInt(arguments[1]), user, _tree.getRoot());
+
+              //Print out the similar users' IDs
               for (User key : sim_users.keySet()) {
                 System.out.println(key.getUserID());
               }
-            } else if (arguments.length == 5) {
+            }
+
+            //If the given command is "similar k weight height age"
+            else if (arguments.length == 5) {
               User user = new User(Integer.parseInt(arguments[2]), Integer.parseInt(arguments[3]),
                   Integer.parseInt(arguments[4]));
               HashMap<User, Double> sim_users =
