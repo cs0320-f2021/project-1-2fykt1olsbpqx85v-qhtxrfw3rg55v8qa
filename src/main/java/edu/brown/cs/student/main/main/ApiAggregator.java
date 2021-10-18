@@ -4,7 +4,6 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import edu.brown.cs.student.main.client.ApiClient;
 import edu.brown.cs.student.main.client.ClientRequestGenerator;
-import edu.brown.cs.student.main.client.ClientRequestGenerator;
 
 import java.lang.reflect.Type;
 import java.util.List;

@@ -1,8 +1,6 @@
 package edu.brown.cs.student.main.core;
 
 import edu.brown.cs.student.main.DataTypes.User;
-import freemarker.log._Log4jLoggerFactory;
-import org.checkerframework.checker.units.qual.A;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableMap;
 import edu.brown.cs.student.main.DataTypes.User;
 import edu.brown.cs.student.main.core.FileParser;
 import edu.brown.cs.student.main.core.KDTree;
-import edu.brown.cs.student.main.core.Node;
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
