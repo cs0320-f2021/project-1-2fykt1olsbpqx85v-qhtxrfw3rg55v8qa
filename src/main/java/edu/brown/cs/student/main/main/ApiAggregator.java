@@ -3,9 +3,12 @@ package edu.brown.cs.student.main.main;
 import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import edu.brown.cs.student.main.client.ApiClient;
+import edu.brown.cs.student.main.client.ClientAuth;
 import edu.brown.cs.student.main.client.ClientRequestGenerator;
 
 import java.lang.reflect.Type;
+import java.net.URI;
+import java.net.http.HttpRequest;
 import java.util.List;
 
 public class ApiAggregator {
@@ -27,6 +30,22 @@ public class ApiAggregator {
         response2 = generateExtras("two",filename,response2);
         String best_response = response1.length() > response2.length() ? response1 : response2;
         return gson.fromJson(best_response,type);
+    }
+
+    /**
+     * Similar to the secured GET request, but is a POST request instead.
+     *
+     * @param param - the body of the POST request.
+     * @return an HttpRequest object for accessing and posting to the secured resource.
+     */
+    public List<Object> getDataInt(String param) throws Exception {
+        Gson gson = new Gson();
+        String filename = "https://runwayapi.herokuapp.com/integration";
+        String apiKey = new ClientAuth().getApiKey();
+        String data = client.makeRequest(ClientRequestGenerator.secureRequest(filename));
+                .header("x-api-key", apiKey)
+                .POST(HttpRequest.BodyPublishers.ofString("{\"auth\": \"<cs-login>\"}" ));
+        return gson.fromJson(request);
     }
 
     /**
