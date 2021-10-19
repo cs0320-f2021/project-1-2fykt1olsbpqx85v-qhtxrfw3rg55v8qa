@@ -23,7 +23,12 @@ public class BloomFilterRecommender<T extends Item> implements Recommender<T> {
   public BloomFilterRecommender(HashMap<String, T> items, double desiredFalsePositiveRate) {
     this.items = items;
     this.desiredFalsePositiveRate = desiredFalsePositiveRate;
+    this.loadData();
+  }
 
+
+  @Override
+  public void loadData() {
     // find the maximum number of attributes for a given item
     for (T value : this.items.values()) {
       int currSize = value.getVectorRepresentation().size();
@@ -44,7 +49,6 @@ public class BloomFilterRecommender<T extends Item> implements Recommender<T> {
       this.bloomFilters.put(entry.getKey(), currFilter);
     }
   }
-
 
   @Override
   public List<T> getTopKRecommendations(T item, int k) {
