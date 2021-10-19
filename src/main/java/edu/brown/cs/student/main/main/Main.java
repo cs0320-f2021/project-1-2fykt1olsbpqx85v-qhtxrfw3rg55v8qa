@@ -11,11 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
-
 import com.google.common.collect.ImmutableMap;
-
-import edu.brown.cs.student.main.DataTypes.User;
-import edu.brown.cs.student.main.core.FileParser;
+import edu.brown.cs.student.main.commands.AddCommand;
+import edu.brown.cs.student.main.commands.ClassifyCommand;
+import edu.brown.cs.student.main.commands.Command;
+import edu.brown.cs.student.main.commands.SimilarCommand;
+import edu.brown.cs.student.main.commands.SubtractCommand;
+import edu.brown.cs.student.main.commands.UsersCommand;
 import edu.brown.cs.student.main.core.KDTree;
 import freemarker.template.Configuration;
 import joptsimple.OptionParser;
@@ -81,24 +83,33 @@ public final class Main {
 
           //Initialize currFilePath, a String that has the file path of the loaded stars file
           String currFilePath = "";
+          Command userCommand = new UsersCommand(_tree);
 
-          //If there are three arguments in the input, and the 1st argument is the add command,
-          if (arguments.length == 3 && arguments[0].equals("add")){
+          HashMap<Command, String> commandMap = new HashMap<>();
+          commandMap.put(new AddCommand(), "add");
+          commandMap.put(new SubtractCommand(), "subtract");
+          commandMap.put(userCommand, "users");
+          commandMap.put(new SimilarCommand(_tree), "similar");
+          commandMap.put(new ClassifyCommand(_tree), "classify");
 
-            //Create a new MathBot, and use it to add and print the 1st and 2nd arguments
-            MathBot math = new MathBot();
-            System.out.println(math.add(Double.parseDouble(arguments[1]),
-                Double.parseDouble(arguments[2])));
+          for (Command command: commandMap.keySet()){
+            if (arguments[0].equals(commandMap.get(command))){
+              command.executeCommand(arguments);
+
+
+              if (command.getSavedData() != null
+                  && command == userCommand){
+                _tree = (KDTree) command.getSavedData();
+              }
+
+
+            }
+
+
+
+
           }
 
-          //If there are 3 arguments in the input, and the 1st argument is the subtract command,
-          if (arguments.length == 3 && arguments[0].equals("subtract")){
-
-            //Create a new MathBot, and use it to subtract and print the 1st and 2nd arguments
-            MathBot math = new MathBot();
-            System.out.println(math.subtract(Double.parseDouble(arguments[1]),
-                Double.parseDouble(arguments[2])));
-          }
 
           //If there are 2 arguments in the input, and the 1st argument is the stars command,
           if (arguments.length == 2 && arguments[0].equals("stars")){
@@ -202,6 +213,9 @@ public final class Main {
             }
           }
 
+
+          /*
+
           // fill in with Api request repl
           if (arguments[0].equals("users") && arguments.length == 2) {
             FileParser fp = new FileParser(arguments[1]);
@@ -215,7 +229,6 @@ public final class Main {
             }
 
           }
-
 
           if (arguments[0].equals("similar")) {
 
@@ -265,8 +278,7 @@ public final class Main {
 
             }
           }
-
-
+          */
 
         } catch (Exception e) {
           e.printStackTrace();
