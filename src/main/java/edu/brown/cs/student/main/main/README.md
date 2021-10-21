@@ -20,7 +20,9 @@ Each package of our project 1 contains the necessary classes of the specific, an
 Main package. 
 The API component is spread out in the client and core packages, and interact with the API Aggregator in Main. 
 datatypes has the User class, and interacts with the KDTree in core. 
-commands holds most of the REPL commands that project 1 requires. 
+commands holds most of the REPL commands that project 1 requires.
+![img.png](img.png)
+
 
 **Unusual algorithms**
 No unusual algorithms.

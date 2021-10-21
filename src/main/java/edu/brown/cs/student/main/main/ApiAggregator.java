@@ -38,6 +38,7 @@ public class ApiAggregator {
      * @param param - the body of the POST request.
      * @return an HttpRequest object for accessing and posting to the secured resource.
      */
+    /*
     public List<Object> getDataInt(String param) throws Exception {
         Gson gson = new Gson();
         String filename = "https://runwayapi.herokuapp.com/integration";
@@ -47,6 +48,8 @@ public class ApiAggregator {
                 .POST(HttpRequest.BodyPublishers.ofString("{\"auth\": \"<cs-login>\"}" ));
         return gson.fromJson(request);
     }
+
+     */
 
     /**
      * Creates request until the result is not an error message ( At most 5 times )
